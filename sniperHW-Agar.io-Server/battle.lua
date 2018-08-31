@@ -1,4 +1,4 @@
-﻿local chuck = require("chuck")
+﻿local chuck = require("chuck")  --引入包
 local packet = chuck.packet
 local config = require("config")
 local battleuser = require("battleuser")

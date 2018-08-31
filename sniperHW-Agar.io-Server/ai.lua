@@ -1,12 +1,12 @@
 ﻿local battleuser = require("battleuser")
 local M = {}
 
-local AiMgr = {}
-AiMgr.__index = AiMgr
+local AiMgr = {}  --声明一个AiMgr表
+AiMgr.__index = AiMgr  --设立元表
 
 function M.new(battle,aiCount)
 	local o = {}
-	o = setmetatable(o,AiMgr)  --把一张表弹出栈，并将其设为给定索引处的值的元表。
+	o = setmetatable(o,AiMgr)  --设置元表
 	o.battle = battle
 	o.robots = {}
 	for i = 1,aiCount do
