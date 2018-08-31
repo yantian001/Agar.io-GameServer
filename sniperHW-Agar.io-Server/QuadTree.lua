@@ -8,7 +8,7 @@ local maxObjs  = 15
 local Rect = {}
 Rect.__index = Rect
 
-
+--矩形
 function M.rect(bottomLeftX,bottomLeftY,topRightX,topRightY)
 	local o = {}
 	o = setmetatable(o,Rect)
@@ -17,6 +17,7 @@ function M.rect(bottomLeftX,bottomLeftY,topRightX,topRightY)
 	return o
 end
 
+--范围
 local function in_range(topRight,bottomLeft,x,y)
 	if x >= bottomLeft.x and y >= bottomLeft.y and x <= topRight.x and y <= topRight.y then
 		return true
@@ -25,6 +26,7 @@ local function in_range(topRight,bottomLeft,x,y)
 	end
 end
 
+--相交
 function Rect:intersect(other)
 	local oTopLeft = {x = other.topRight.x - other:width(),y = other.topRight.y}
 	local oBottomRight = {x = other.bottomLeft.x + other:width(),y = other.bottomLeft.y}
@@ -74,10 +76,12 @@ function Rect:include(other)
 
 end
 
+--矩形高度
 function Rect:height()
 	return self.topRight.y - self.bottomLeft.y
 end
 
+--矩形宽度
 function Rect:width()
 	return self.topRight.x - self.bottomLeft.x
 end
@@ -122,7 +126,7 @@ function QuadTree:getSubTree(rect)
 	return nil
 end
 
-
+--四叉树：分离
 function QuadTree:split()
    	local  subWidth = math.ceil(self.rect:width() / 2)
    	local  subHeight = math.ceil(self.rect:height() / 2)
@@ -138,6 +142,7 @@ function QuadTree:split()
    	self.nodes[4] = new(4,M.rect(bottomLeft.x + subWidth, bottomLeft.y, topRight.x, bottomLeft.y + subHeight),self.level + 1)
 end
 
+--四叉树：插入
 function QuadTree:insert(obj)
 
 	if obj.tree then
@@ -204,6 +209,7 @@ function QuadTree:rectCall(rect,func)
 	end
 end
 
+--四叉树：移动
 function QuadTree:remove(obj)
 	if obj.tree == self then
 		if self.objs[obj] then
@@ -216,6 +222,7 @@ function QuadTree:remove(obj)
 	end
 end
 
+--四叉树：更新
 function QuadTree:update(obj)
 	if self.level ~= 1 then
 		error("update should call in level == 1")

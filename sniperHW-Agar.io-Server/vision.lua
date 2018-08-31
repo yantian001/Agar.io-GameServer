@@ -12,6 +12,7 @@ M.visibleSize = {width = 1024,height = 768}
 local block = {}
 block.__index = block
 
+--新的管理块
 function M.newBlock(mgr,x,y)
 	local o = {}
 	o = setmetatable(o,block)
@@ -23,6 +24,7 @@ function M.newBlock(mgr,x,y)
 	return o
 end
 
+--添加模块
 function block:Add(o)
 	self.objs[o] = o
 	for k,v in pairs(self.observers) do
@@ -47,6 +49,7 @@ function block:Add(o)
 	end
 end
 
+--移动管理模块
 function block:Remove(o)
 	self.objs[o] = nil
 	for k,v in pairs(self.observers) do
@@ -54,12 +57,13 @@ function block:Remove(o)
 		if (isRealUser and v.player) or (not isRealUser) then
 			if v.viewObjs[o] then
 				local t = v.viewObjs[o]
-				t.ref = t.ref - 1			
-			end	
+				t.ref = t.ref - 1
+			end
 		end
 	end
 end
 
+--添加服务器端模块
 function block:AddObserver(o)
 	self.observers[o] = o
 	for k,v in pairs(self.objs) do
@@ -67,7 +71,7 @@ function block:AddObserver(o)
 		if isRealUser and o.player then
 			if o.viewObjs[k] then
 				local t = o.viewObjs[v]
-				t.ref = t.ref + 1		
+				t.ref = t.ref + 1
 			else
 				o.viewObjs[k] = {enterSee = true,ref = 1}
 				if o:IsRealUser() and o.player then
@@ -78,7 +82,7 @@ function block:AddObserver(o)
 		elseif not isRealUser then
 			if o.viewObjs[k] then
 				local t = o.viewObjs[v]
-				t.ref = t.ref + 1		
+				t.ref = t.ref + 1
 			else
 				o.viewObjs[k] = {ref = 1}
 			end
@@ -86,6 +90,7 @@ function block:AddObserver(o)
 	end
 end
 
+--移动observer模块
 function block:RemoveObserver(o)
 	if self.observers[o] then
 		self.observers[o] = nil
@@ -94,7 +99,7 @@ function block:RemoveObserver(o)
 			for k,v in pairs(self.objs) do
 				if o.viewObjs[k] then
 					local t = o.viewObjs[k]
-					t.ref = t.ref - 1				
+					t.ref = t.ref - 1
 				end
 			end
 		end
@@ -118,6 +123,7 @@ function M.new()
 	return o
 end
 
+--视野模块
 function visionMgr:getBlockByPoint(pos)
 	local x = pos.x
 	local y = pos.y
@@ -130,6 +136,7 @@ function visionMgr:getBlockByPoint(pos)
 	return self.blocks[y+1][x+1]
 end
 
+--视野通知模块
 function visionMgr:calBlocks(o)
 	local blocks = {}
 	blocks.block_info = {}
@@ -151,6 +158,7 @@ function visionMgr:calBlocks(o)
 	return blocks
 end
 
+--视野内通知用户模块
 function visionMgr:calUserVisionBlocks(user)
 	local blocks = {}
 	blocks.block_info = {}
@@ -184,7 +192,7 @@ end
 
 --对象离开视野系统
 function visionMgr:Leave(o)
-	if o.visionMgr then	
+	if o.visionMgr then
 		for k,v in pairs(o.visionblocks.blocks) do
 			v:Remove(o)
 		end
@@ -206,7 +214,7 @@ function visionMgr:UpdateVisionObj(o)
 	if o.colMgr then
 		--计算出新管理块
 		local blocks = self:calBlocks(o)
-		
+
 		for k,v in pairs(o.visionblocks.blocks) do
 			--从离开的管理块移除对象(在老单元,不在新单元范围内的块)
 			if not in_range(blocks.block_info.top_right, blocks.block_info.bottom_left , v.x , v.y) then
@@ -216,7 +224,7 @@ function visionMgr:UpdateVisionObj(o)
 
 		for k,v in pairs(blocks.blocks) do
 			--向新加入的管理块加入对象（在新单元,不在老管理单元范围内的块）
-			if not in_range(o.visionblocks.block_info.top_right, o.visionblocks.block_info.bottom_left , v.x , v.y) then			
+			if not in_range(o.visionblocks.block_info.top_right, o.visionblocks.block_info.bottom_left , v.x , v.y) then
 				v:Add(o)
 			end
 		end
@@ -296,8 +304,8 @@ function visionMgr:updateViewPort(user)
 	local block = self:getBlockByPoint(topRight)
 	topRight.x = block.x
 	topRight.y = block.y
-		
-	return bottomLeft,topRight  
+
+	return bottomLeft,topRight
 
 end
 
@@ -346,7 +354,7 @@ function visionMgr:UpdateUserVision(user)
 					--在老单元，不在新单元中
 					if not in_range(bottomLeft,topRight,x,y) then
 						self.blocks[y][x]:RemoveObserver(user)
-					end 
+					end
 				end
 			end
 
@@ -355,11 +363,11 @@ function visionMgr:UpdateUserVision(user)
 					--在新单元，不在老单元中
 					if not in_range(oldBottomLeft,oldTopRight,x,y) then
 						self.blocks[y][x]:AddObserver(user)
-					end 
+					end
 				end
 			end
 		end
-	end 
+	end
 end
 
 return M

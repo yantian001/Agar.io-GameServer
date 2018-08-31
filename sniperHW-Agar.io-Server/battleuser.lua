@@ -27,10 +27,12 @@ function M.new(player,userID)
 	return o
 end
 
+--判断是否是真的玩家（防止作弊）
 function battleUser:IsRealUser()
 	return self.userID >= 1000
 end
 
+--玩家复活
 function battleUser:Relive()
 
 	if self.userID == 0 then
@@ -51,6 +53,7 @@ function battleUser:Relive()
 	end
 end
 
+--更新聚合
 function battleUser:UpdateGatherTogeter()
 	if self.userID == 0 then
 		return
@@ -78,6 +81,7 @@ function battleUser:UpdateGatherTogeter()
 	end
 end
 
+--更新
 function battleUser:Update(elapse)
 
 	if self.userID ~= 0 and self.ballCount == 0 then
@@ -104,6 +108,7 @@ function battleUser:Update(elapse)
 	end
 end
 
+--玩家释放球并更新信息
 function battleUser:RefreshBallsUpdateInfo()
 	for k,v in pairs(self.balls) do
 		if v.type == objtype.ball then
@@ -181,6 +186,7 @@ function battleUser:NotifyBalls2Client(elapse)
 	end
 end
 
+--玩家移动
 function battleUser:Move(msg)
 	self.stop = nil
 	if self.ballCount == 1 then
@@ -236,6 +242,7 @@ function battleUser:Split()
 	self:UpdateBallMovement()
 end
 
+--更新球的移动
 function battleUser:UpdateBallMovement()
 	if self.userID == 0 or self.ballCount < 1 or nil == self.reqDirection then
 		return

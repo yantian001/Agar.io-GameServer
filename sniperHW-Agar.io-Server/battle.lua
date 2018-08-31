@@ -16,6 +16,7 @@ M.battleIDCounter = 1
 local thornMgr = {}
 thornMgr.__index = thornMgr
 
+
 function thornMgr.new(battle)
 	local o = {}
 	o = setmetatable(o,thornMgr)
@@ -44,6 +45,7 @@ battle.__gc = function ()
 	print("battle gc")
 end
 
+--建立新的战斗
 function battle.new()
 	local o = {}
 	o = setmetatable(o,battle)
@@ -69,12 +71,14 @@ function battle.new()
 	return o
 end
 
+--获取球的ID
 function battle:GetBallID()
 	local id = self.ballIDCounter
 	self.ballIDCounter = self.ballIDCounter + 1
 	return id
 end
 
+--广播
 function battle:Broadcast(msg,except)
 	for k,v in pairs(self.users) do
 		if v ~= except then
@@ -83,6 +87,7 @@ function battle:Broadcast(msg,except)
 	end
 end
 
+--游戏结束
 function battle:GameOver()
 	if self.timer then
 		self.timer:UnRegister()
@@ -109,6 +114,7 @@ function battle:GameOver()
 
 end
 
+--更新战斗
 function battle:Update()
 	self.updateCount = self.updateCount + 1
 	local nowSysTick = chuck.time.systick()
@@ -149,6 +155,7 @@ function battle:Update()
 	self.starMgr:Update()
 end
 
+--进入战斗
 function battle:Enter(battleUser)
 	if not battleUser.battle then
 		print("first enter")
@@ -193,6 +200,7 @@ function M.getFreeRoom()
 	return room
 end
 
+--进入房间
 function M.EnterRoom(player)
 	local userID = player.userID
 	local battleUser = M.userID2BattleUser[userID]

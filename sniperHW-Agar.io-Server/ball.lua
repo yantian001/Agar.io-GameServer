@@ -11,7 +11,7 @@ ball.__index = ball  --定义一个元表，ball是__index的元方法
 
 function M.new(id,owner,type,pos,score,color)  --新的对象
 	local o = {}
-	o = setmetatable(o,ball)
+	o = setmetatable(o,ball)  --把ball设为o的元表
 	o.owner = owner
 	o.pos = {x=pos.x , y=pos.y}
 	o.score = score
@@ -37,7 +37,7 @@ function M.new(id,owner,type,pos,score,color)  --新的对象
 end
 
 
---球正在死亡
+--给球这个类创建正在死亡的方法
 function ball:OnDead()
 	if self.type == objtype.thorn then
 		self.owner.battle.thornMgr:OnThornDead()
@@ -47,6 +47,7 @@ function ball:OnDead()
 	self.owner:OnBallDead(self)
 end
 
+--给球这个类创建修复边境（没看懂英文）的方法
 function ball:fixBorder()
 	local mapBorder = self.owner.battle.mapBorder
 	local bottomLeft = mapBorder.bottomLeft
@@ -58,7 +59,7 @@ function ball:fixBorder()
 	self.pos.y = util.min(topRight.y - R,self.pos.y)
 end
 
---更新球的位置
+--给球这个类创建更新位置的方法
 function ball:UpdatePosition(averageV,elapse)
 	elapse = elapse/1000
 	self.pos.x = self.pos.x + averageV.x * elapse
@@ -66,6 +67,7 @@ function ball:UpdatePosition(averageV,elapse)
 	self:fixBorder()
 end
 
+--给球这个类创建预知的方法
 function ball:PredictV()
 	--计算一个预测速度
 	local predictVelocitys = {}
@@ -86,6 +88,7 @@ function ball:PredictV()
 	local predictV = predictV/3
 end
 
+--给球这个类创建更新的方法
 function ball:Update(elapse)
 
 	if self.splitTimeout and self.owner.battle.tickCount > self.splitTimeout then
@@ -125,6 +128,7 @@ function ball:Update(elapse)
 
 end
 
+--给球这个类创建移动的方法（传入移动的方向）
 function ball:Move(direction)
 	--print("ball:Move",self.id)
 	--首先根据小球半径计算速度标量值
@@ -139,6 +143,7 @@ function ball:Move(direction)
 	end
 end
 
+--给球这个类创建聚合的方法（传入中心点）
 function ball:GatherTogeter(centerPos)
 	local vv = util.vector2D.new(centerPos.x - self.pos.x , centerPos.y - self.pos.y)
 	local speed = config.SpeedByR(self.r) * config.centripetalSpeedCoef
@@ -147,20 +152,22 @@ function ball:GatherTogeter(centerPos)
 	self.moveVelocity = util.velocity.new(velocity)
 end
 
+--停止的方法
 function ball:Stop()
 	if self.moveVelocity then
 		self.moveVelocity = util.velocity.new(self.moveVelocity.v,util.vector2D.new(0,0),200,200)
 	end
 end
 
+--
 function ball:PackOnBeginSee(t)
 	local tt = {}
-	tt.userID = self.owner.userID
+	tt.userID = self.owner.userID  --用户ID
 	tt.id = self.id
-	tt.r = self.r
-	tt.pos = {x = self.pos.x,y = self.pos.y}
-	tt.color = self.color
-	local velocitys = {}
+	tt.r = self.r  --半径
+	tt.pos = {x = self.pos.x,y = self.pos.y}  --位置
+	tt.color = self.color  --自身颜色
+	local velocitys = {}  --移动速率
 	if self.moveVelocity then
 		self.moveVelocity:Pack(velocitys)
 	end
@@ -178,41 +185,44 @@ function ball:PackOnBeginSee(t)
 	table.insert(t,tt)
 end
 
-local function calSplitTimeout(score)
+local function calSplitTimeout(score)  --超时
 	return math.floor(math.sqrt(score*4))*1000
 end
 
+--吃星星
 function ball:EatStar(star)
 	self.owner.battle.starMgr:OnStarDead(star)
-	self.score = self.score + config.starScore
+	self.score = self.score + config.starScore  --总分数=目前自身分数+星星分数
 	self.r = config.Score2R(self.score)
 	if not self.owner.stop and self.moveVelocity then
 		local speed = config.SpeedByR(self.r)
 		--将传入的角度和速度标量转换成一个速度向量
-		local maxVeLocity = util.TransformV(self.reqDirection,speed)
-		self.moveVelocity = util.velocity.new(self.moveVelocity.v,maxVeLocity,200)
+		local maxVeLocity = util.TransformV(self.reqDirection,speed)  --最大速率
+		self.moveVelocity = util.velocity.new(self.moveVelocity.v,maxVeLocity,200)  --自身移动速率
 	end
 end
 
+--吃孢子（传入另一个玩家数据）
 function ball:EatSpore(other)
-	other:OnDead()
-	self.score = self.score + other.score
-	self.r = config.Score2R(self.score)
+	other:OnDead()  --另一个玩家死亡
+	self.score = self.score + other.score  --总分数=自身分数+另一个玩家分数
+	self.r = config.Score2R(self.score)  --自身半径=分数*2
 	if not self.owner.stop and self.moveVelocity then
-		local speed = config.SpeedByR(self.r)
+		local speed = config.SpeedByR(self.r)  --速度
 		--将传入的角度和速度标量转换成一个速度向量
 		local maxVeLocity = util.TransformV(self.reqDirection,speed)
 		self.moveVelocity = util.velocity.new(self.moveVelocity.v,maxVeLocity,200)
 	end
 end
 
+--处理刺
 function ball:ProcessThorn()
 
 	if not self.needThorn then
 		return
 	end
 
-	self.needThorn = nil
+	self.needThorn = nil  --自身刺为空
 
 	local eatFactor = config.EatFactor(self.score)
 	local n1 = math.min(config.maxUserBallCount - self.owner.ballCount , config.maxThornBallCount)
@@ -243,7 +253,7 @@ function ball:ProcessThorn()
 	local delta = math.floor(360/splitCount)
 	local L = 8 * config.screenSizeFactor
 	local v0 = config.SpeedByR(config.Score2R(S2)) * config.spitV0Factor;
-	local spitDuration = math.floor((2*L/v0)*1000)
+	local spitDuration = math.floor((2*L/v0)*1000)  --饱和度
 
 	local _scoreRemain = self.score - S2*splitCount
 
@@ -256,6 +266,7 @@ function ball:ProcessThorn()
 	self.splitTimeout = self.owner.battle.tickCount + calSplitTimeout(self.score)
 end
 
+--吃刺（传入刺）
 function ball:EatThorn(thorn)
 	thorn:OnDead()
 	self.score = self.score + thorn.score
@@ -277,6 +288,7 @@ function ball:EatThorn(thorn)
 	end
 end
 
+--吃球（传入其他玩家信息）
 function ball:EatBall(other)
 	other:OnDead()
 	self.score = self.score + other.score
@@ -292,6 +304,7 @@ function ball:EatBall(other)
 	end
 end
 
+--判断能否吃
 local function canEat(b1,b2)
 	local eatFactor = config.EatFactor(b1.score)
 	if b1.score/b2.score >= eatFactor then
@@ -301,6 +314,7 @@ local function canEat(b1,b2)
 	end
 end
 
+--检查球之间的冲突
 local function checkCellCollision(ball1,ball2)
 	local totalR = ball1.r + ball2.r
 	local dx = ball2.pos.x - ball1.pos.x
@@ -314,9 +328,9 @@ local function checkCellCollision(ball1,ball2)
 
 end
 
-
+--自身一圈？？不懂
 function ball:OnSelfBallOverLap(other)
-	local manifold = checkCellCollision(self,other)
+	local manifold = checkCellCollision(self,other)  --折叠
 	if manifold then
 		local ball1 = self
 		local ball2 = other
@@ -336,7 +350,7 @@ function ball:OnSelfBallOverLap(other)
 		local px = penetration * nx;
 		local py = penetration * ny;
 
-		local totalMass,invTotalMass,impulse1,impulse2
+		local totalMass,invTotalMass,impulse1,impulse2  --??
 
 
 		totalMass = ball1.score + ball2.score
@@ -359,6 +373,7 @@ function ball:OnSelfBallOverLap(other)
 	end
 end
 
+--增加冲突灵活性(传入ball1和ball2)
 local function addCollisionElasticity(ball1,ball2)
 	local dir1To2 = util.vector2D.new(ball2.pos.x - ball1.pos.x , ball2.pos.y - ball1.pos.y):getDirAngle()
 	local dir2To1 = math.modf(dir1To2 + 180,360)
@@ -372,7 +387,7 @@ local function addCollisionElasticity(ball1,ball2)
 		local invd = 1 / d
 		local nx = math.floor(manifold.dx) * invd
 		local ny = math.floor(manifold.dy) * invd
-		local penetration =(manifold.totalR - d) * 0.75
+		local penetration =(manifold.totalR - d) * 0.75  --突破
 		if penetration <= 0 then
 			return
 		end
@@ -405,6 +420,7 @@ local function addCollisionElasticity(ball1,ball2)
 	end
 end
 
+--超过一圈???
 function ball:OnOverLap(other)
 	if self.type == objtype.spore then
 		return
@@ -447,6 +463,7 @@ function ball:OnOverLap(other)
 	end
 end
 
+--球吐孢子
 function ball:spit(owner,newtype,spitScore,spitterScore,dir,v0,duration,dontEnterColMgr)
 	local spitR = config.Score2R(spitScore)
 	local leftBottom = {x = spitR, y = spitR}
@@ -505,6 +522,7 @@ function ball:Spit()
 	end
 end
 
+--判断能否吐孢子
 function ball:splitAble()
 	local eatFactor = config.EatFactor(self.score)
 	if self.score < config.sp0 * eatFactor * 2 then

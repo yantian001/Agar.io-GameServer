@@ -22,6 +22,7 @@ local function newUser(conn,userID)
 	return o
 end
 
+--用户消息
 function user:onMsg(msg)
 	local handler = user.msgHander[msg.cmd]
 	if handler then
@@ -31,6 +32,7 @@ function user:onMsg(msg)
 	end
 end
 
+--用户发送给客户端
 function user:Send2Client(msg)
 	if self.conn then
 		local buff = chuck.buffer.New()
@@ -40,17 +42,20 @@ function user:Send2Client(msg)
 	end
 end
 
-
+--消息分发
+--收到EnterBattle后跳转到战斗服中的进入房间逻辑
 user.msgHander["EnterBattle"] = function (self,msg)
 	battle.EnterRoom(self)
 end
 
+--收到Move后跳转到战斗玩家中的移动逻辑
 user.msgHander["Move"] = function (self,msg)
 	if self.battleUser then
 		self.battleUser:Move(msg)
 	end
 end
 
+--收到FixTime后打表
 user.msgHander["FixTime"] = function (self,msg)
 	if self.battleUser then
 		local room = self.battleUser.battle
@@ -62,25 +67,28 @@ user.msgHander["FixTime"] = function (self,msg)
 	end
 end
 
-
+--收到Stop后跳转到战斗玩家的停止逻辑
 user.msgHander["Stop"] = function (self,msg)
 	if self.battleUser then
 		self.battleUser:Stop(msg)
 	end
 end
 
+--收到Spit后跳转到战斗玩家的吐孢子逻辑
 user.msgHander["Spit"] = function (self,msg)
 	if self.battleUser then
 		self.battleUser:Spit(msg)
 	end
 end
 
+--收到Split后跳转到战斗玩家的分裂逻辑
 user.msgHander["Split"] = function (self,msg)
 	if self.battleUser then
 		self.battleUser:Split(msg)
 	end
 end
 
+--客户端消息分发（传入与服务端连接接收来的消息）
 function M.OnClientMsg(conn,msg)
 	--print(msg.cmd)
 	if msg.cmd == "Login" then
@@ -110,7 +118,8 @@ function M.OnClientMsg(conn,msg)
 	end
 end
 
-function M.OnClientDisconnected(conn)  --客户端连接失败
+--客户端连接失败(传入与服务端的连接)
+function M.OnClientDisconnected(conn)
 	local user = M.conn2User[conn]
 	if user then
 		M.conn2User[conn] = nil

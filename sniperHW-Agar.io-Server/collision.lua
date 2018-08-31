@@ -13,10 +13,12 @@ function M.new()
 	return o
 end
 
+--开始碰撞
 function collision:Enter(o)
 	self.impl:Enter(o)
 end
 
+--结束碰撞
 function collision:Leave(o)
 	self.impl:Leave(o)
 end

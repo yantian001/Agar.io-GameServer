@@ -20,6 +20,7 @@ function M.point2D.equal(p1,p2)
 	return p1.x == p2.x and p1.y == p2.y
 end
 
+--两球距离
 function M.point2D.distance(p1,p2)
 	local xx = p1.x - p2.x
 	local yy = p1.y - p2.y
@@ -32,6 +33,7 @@ function M.point2D.distancePow2(p1,p2)
 	return xx * xx + yy * yy
 end
 
+--移动
 function M.point2D.moveto(p,dir,distance,leftBottom,topRight)
 	local target = {x = p.x , y = p.y}
 	local rad = M.PI/180*dir
@@ -59,6 +61,7 @@ local function isTypeVector2D(o)
 	return type(o) == "table" and o.__vector2D
 end
 
+--加
 vector2D.__add = function (p1,p2)
 	if isTypeVector2D(p1) and isTypeVector2D(p2) then
 		return M.vector2D.new(p1.x + p2.x, p1.y + p2.y)
@@ -67,6 +70,7 @@ vector2D.__add = function (p1,p2)
 	end
 end
 
+--减
 vector2D.__sub = function (p1,p2)
 	if isTypeVector2D(p1) and isTypeVector2D(p2) then
 		return M.vector2D.new(p1.x - p2.x, p1.y - p2.y)
@@ -75,6 +79,7 @@ vector2D.__sub = function (p1,p2)
 	end
 end
 
+--乘
 vector2D.__mul = function (p1,p2)
 	if isTypeVector2D(p1) and type(p2) == "number" then
 		return M.vector2D.new(p1.x * p2, p1.y * p2)
@@ -82,6 +87,7 @@ vector2D.__mul = function (p1,p2)
 	return nil
 end
 
+--除
 vector2D.__div = function (p1,p2)
 	if isTypeVector2D(p1) and type(p2) == "number" then
 		return M.vector2D.new(p1.x / p2, p1.y / p2)
@@ -126,13 +132,14 @@ function vector2D:copy()
 	return M.vector2D.new(self.x,self.y)
 end
 
+--获取角度
 function vector2D:getDirAngle()
 	return math.fmod((((math.atan(self.y,self.x)*180)/M.PI) + 360) , 360)
 
 end
 
-local velocity = {}
-velocity.__index = velocity
+local velocity = {}  --声明一个速率数组
+velocity.__index = velocity  --速率是__index的元方法
 
 if not math.maxinteger then
 	math.maxinteger = 0xffffffff
@@ -188,6 +195,7 @@ function velocity:Update(elapse)
 	end
 end
 
+--速率方法封装
 function velocity:Pack(tt)
 	local t = {}
 	t.accRemain = self.accRemain
@@ -201,6 +209,7 @@ function velocity:Copy()
 	return M.velocity.new(self.v,self.targetV,self.accRemain,self.duration)
 end
 
+--转换
 function M.TransformV(direction,v)
 	direction = math.modf(direction,360.0)
 	local rad = M.PI/180.0*direction

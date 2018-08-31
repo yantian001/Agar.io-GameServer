@@ -16,6 +16,7 @@ collisionMgr.__index = collisionMgr
 local block = {}
 block.__index = block
 
+--创建新的块
 function M.newBlock(mgr,x,y)
 	local o = {}
 	o = setmetatable(o,block)
@@ -26,7 +27,7 @@ function M.newBlock(mgr,x,y)
 	return o
 end
 
-
+--添加块
 function block:Add(o)
 	self.objs[o] = o
 end
@@ -35,6 +36,7 @@ function block:Remove(o)
 	self.objs[o] = nil
 end
 
+--检测碰撞
 local function CheckCollision(o,other)
 	--只有小球才主动检测碰撞
 	if o.type == objtype.ball then
@@ -75,6 +77,7 @@ function M.new()
 	return o
 end
 
+--获取块的位置
 function collisionMgr:getBlockByPoint(pos)
 	local x = pos.x
 	local y = pos.y

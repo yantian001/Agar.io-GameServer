@@ -8,6 +8,7 @@ local M = {}
 local star = {}
 star.__index = star
 
+--新的星星
 local function newStar(id,mgr)
 	local o = {}
 	o = setmetatable(o,star)
@@ -19,9 +20,10 @@ local function newStar(id,mgr)
 	o.r = 1
 	o.index = 0
 	mgr.room.colMgr:Enter(o)
-	return o	
+	return o
 end
 
+--星星存活
 function star:Relive()
 	local offset1 = math.floor((self.id - 1) / 32) + 1
 	local offset2 = (self.id - 1) % 32
@@ -52,10 +54,11 @@ function M.newMgr(room)
 	return o
 end
 
-function starMgr:GetStarBits()
+function starMgr:GetStarBits()  --星星标记
 	return self.starBits
 end
 
+--星星更新
 function starMgr:Update()
 	local nowTick = self.room.tickCount
 	local reliveStars = {}
@@ -77,6 +80,7 @@ function starMgr:Update()
 	self:NotifyDead()
 end
 
+--星星死亡（传入星星）
 function starMgr:OnStarDead(star)
 	--从碰撞管理器中移除
 	self.room.colMgr:Leave(star)
@@ -92,6 +96,7 @@ function starMgr:OnStarDead(star)
 	table.insert(self.deads,star.id)
 end
 
+--通知星星死亡
 function starMgr:NotifyDead()
 	if self.deads and #self.deads > 0 then
 		self.room:Broadcast({cmd="StarDead",stars=self.deads,timestamp=self.room.tickCount})

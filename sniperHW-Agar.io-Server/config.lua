@@ -44,7 +44,6 @@ M.colors = {
 M.thornColorID = 22
 M.thornColor = {1,0,1,1}
 
-
 function M.Score2R(score)
 	return math.sqrt((score * 0.165 + 0.6)) * 50.0 * 0.01 * M.screenSizeFactor
 end
