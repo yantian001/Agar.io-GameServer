@@ -48,6 +48,7 @@ local function CheckCollision(o,other)
 	end
 end
 
+--检测碰撞
 function block:CheckCollision(o,alreayCheck)
 	for k,v in pairs(self.objs) do
 		if o ~= v then
@@ -90,6 +91,7 @@ function collisionMgr:getBlockByPoint(pos)
 	return self.blocks[y+1][x+1]
 end
 
+--计算出新的管理块
 function collisionMgr:calBlocks(o)
 	local blocks = {}
 	blocks.block_info = {}
@@ -111,6 +113,7 @@ function collisionMgr:calBlocks(o)
 	return blocks
 end
 
+--开始碰撞
 function collisionMgr:Enter(o)
 	if o.colMgr then
 		return
@@ -122,6 +125,7 @@ function collisionMgr:Enter(o)
 	o.colMgr = self
 end
 
+--结束碰撞
 function collisionMgr:Leave(o)
 	if o.colMgr then
 		for k,v in pairs(o.blocks.blocks) do
@@ -140,7 +144,7 @@ local function in_range(top_right,bottom_left,x,y)
 	end
 end
 
---根据对象坐标更新管理模块
+--根据对象坐标更新管理模块（计算小球处于哪个管理块）
 function collisionMgr:Update(o)
 	if o.colMgr then
 		--计算出新的管理块

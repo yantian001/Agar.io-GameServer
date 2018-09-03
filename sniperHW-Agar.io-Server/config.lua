@@ -41,19 +41,23 @@ M.colors = {
 	{0.24,0.98,0.91,1},
 }
 
+--设置刺的ID和颜色
 M.thornColorID = 22
 M.thornColor = {1,0,1,1}
 
+--根据分数算半径
 function M.Score2R(score)
 	return math.sqrt((score * 0.165 + 0.6)) * 50.0 * 0.01 * M.screenSizeFactor
 end
 
+--根据小球半径算速度
 function M.SpeedByR(r,speedLev)
 	speedLev = speedLev or 1.0
 	r = r / M.screenSizeFactor
 	return 1.6 * math.min(5.0, 9.0 / (r + 1.0) + 0.7) * M.screenSizeFactor * speedLev
 end
 
+--吃的因素
 function M.EatFactor(score)
 	if score <= 20.0 then
 		return 1.3
@@ -64,6 +68,7 @@ function M.EatFactor(score)
 	end
 end
 
+--自动生成星星的坐标和颜色
 M.stars = {
 	{x=2708,y=2874,color=10},
 	{x=3270,y=1109,color=4},

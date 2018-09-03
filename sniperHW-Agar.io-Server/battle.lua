@@ -16,7 +16,7 @@ M.battleIDCounter = 1
 local thornMgr = {}
 thornMgr.__index = thornMgr
 
-
+--创建新的刺
 function thornMgr.new(battle)
 	local o = {}
 	o = setmetatable(o,thornMgr)
@@ -31,6 +31,7 @@ function thornMgr.new(battle)
 	return o
 end
 
+--球碰到刺后死亡
 function thornMgr:OnThornDead()
 	local score = math.random(config.minThornScore,config.maxThornScore)
 	local r = math.ceil(config.Score2R(score))
@@ -114,7 +115,7 @@ function battle:GameOver()
 
 end
 
---更新战斗
+--更新所有战场数据（每一帧都在更新）
 function battle:Update()
 	self.updateCount = self.updateCount + 1
 	local nowSysTick = chuck.time.systick()

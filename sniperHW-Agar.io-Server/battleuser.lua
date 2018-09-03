@@ -81,7 +81,7 @@ function battleUser:UpdateGatherTogeter()
 	end
 end
 
---更新
+--更新所有战斗玩家数据（每一帧都在更新）
 function battleUser:Update(elapse)
 
 	if self.userID ~= 0 and self.ballCount == 0 then

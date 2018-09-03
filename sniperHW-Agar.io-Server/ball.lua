@@ -37,7 +37,7 @@ function M.new(id,owner,type,pos,score,color)  --新的对象
 end
 
 
---给球这个类创建正在死亡的方法
+--给球这个类创建死亡的方法
 function ball:OnDead()
 	if self.type == objtype.thorn then
 		self.owner.battle.thornMgr:OnThornDead()
@@ -47,7 +47,7 @@ function ball:OnDead()
 	self.owner:OnBallDead(self)
 end
 
---给球这个类创建修复边境（没看懂英文）的方法
+--给球这个类创建修复边界的方法，如果球碰到边界，系统将自动修复它的位置
 function ball:fixBorder()
 	local mapBorder = self.owner.battle.mapBorder
 	local bottomLeft = mapBorder.bottomLeft
@@ -67,7 +67,7 @@ function ball:UpdatePosition(averageV,elapse)
 	self:fixBorder()
 end
 
---给球这个类创建预知的方法
+--给球这个类创建预测速度的方法
 function ball:PredictV()
 	--计算一个预测速度
 	local predictVelocitys = {}
@@ -143,7 +143,7 @@ function ball:Move(direction)
 	end
 end
 
---给球这个类创建聚合的方法（传入中心点）
+--给球这个类创建聚合（吃了对方变大）的方法（传入中心点）
 function ball:GatherTogeter(centerPos)
 	local vv = util.vector2D.new(centerPos.x - self.pos.x , centerPos.y - self.pos.y)
 	local speed = config.SpeedByR(self.r) * config.centripetalSpeedCoef
@@ -307,6 +307,7 @@ end
 --判断能否吃
 local function canEat(b1,b2)
 	local eatFactor = config.EatFactor(b1.score)
+	--b1的分数/b2的分数 >= 吃的指标，则可以吃，否则不能吃
 	if b1.score/b2.score >= eatFactor then
 		return true
 	else
@@ -314,9 +315,9 @@ local function canEat(b1,b2)
 	end
 end
 
---检查球之间的冲突
+--检查球之间的冲突（距离公式）
 local function checkCellCollision(ball1,ball2)
-	local totalR = ball1.r + ball2.r
+	local totalR = ball1.r + ball2.r  --两球半径和
 	local dx = ball2.pos.x - ball1.pos.x
 	local dy = ball2.pos.y - ball1.pos.y
 	local squared = dx * dx + dy * dy
@@ -328,7 +329,7 @@ local function checkCellCollision(ball1,ball2)
 
 end
 
---自身一圈？？不懂
+--判断是否重叠
 function ball:OnSelfBallOverLap(other)
 	local manifold = checkCellCollision(self,other)  --折叠
 	if manifold then
@@ -373,7 +374,7 @@ function ball:OnSelfBallOverLap(other)
 	end
 end
 
---增加冲突灵活性(传入ball1和ball2)
+--增加碰撞弹性(传入ball1和ball2数据)
 local function addCollisionElasticity(ball1,ball2)
 	local dir1To2 = util.vector2D.new(ball2.pos.x - ball1.pos.x , ball2.pos.y - ball1.pos.y):getDirAngle()
 	local dir2To1 = math.modf(dir1To2 + 180,360)
@@ -420,7 +421,7 @@ local function addCollisionElasticity(ball1,ball2)
 	end
 end
 
---超过一圈???
+--
 function ball:OnOverLap(other)
 	if self.type == objtype.spore then
 		return
@@ -511,6 +512,7 @@ function ball:spit(owner,newtype,spitScore,spitterScore,dir,v0,duration,dontEnte
 
 end
 
+--
 function ball:Spit()
 	local eatFactor = config.EatFactor(self.score)
 	if self.score >= config.sp0 * (1 + eatFactor) then
@@ -525,6 +527,7 @@ end
 --判断能否吐孢子
 function ball:splitAble()
 	local eatFactor = config.EatFactor(self.score)
+
 	if self.score < config.sp0 * eatFactor * 2 then
 		return false
 	else
@@ -533,6 +536,7 @@ function ball:splitAble()
 
 end
 
+--球分裂
 function ball:Split()
 	if self.owner.ballCount >= config.maxUserBallCount then
 		return

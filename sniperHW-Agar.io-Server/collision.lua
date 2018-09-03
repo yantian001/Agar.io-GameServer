@@ -23,7 +23,7 @@ function collision:Leave(o)
 	self.impl:Leave(o)
 end
 
---根据对象坐标更新管理块
+--根据对象坐标更新管理模块
 function collision:Update(o)
 	self.impl:Update(o)
 end
