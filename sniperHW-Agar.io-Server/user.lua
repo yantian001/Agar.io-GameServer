@@ -55,7 +55,7 @@ user.msgHander["Move"] = function (self,msg)
 	end
 end
 
---收到FixTime后打表
+--收到FixTime后与客户端进行对时，保持服务器端与客户端的时间一致
 user.msgHander["FixTime"] = function (self,msg)
 	if self.battleUser then
 		local room = self.battleUser.battle

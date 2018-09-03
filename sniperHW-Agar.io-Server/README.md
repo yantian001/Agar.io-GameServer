@@ -2,7 +2,7 @@
 代码解读、文件之间的关系、服务端逻辑  
 #### 更新日志  
 2018.8.31：整个框架看完了一遍，对战斗逻辑有了更深的体会，下一步是理清逻辑，画出战斗逻辑的流程图；  
-2018.9.3：
+2018.9.3下午：二刷框架，把不懂的地方搞懂了；  
 #### 各lua文件的含义  
 - ai.lua：设定玩家信息，并随机更新AI的移动方向和位置。  
 - ball.lua：定义了ball中的所有属性和方法。内容较多，包含了死亡，更新，吃对方，吐孢子，分裂的方法。     
@@ -13,23 +13,20 @@
 - collisionGrid.lua：网格碰撞。检测这个球是否在这个管理块（网格）中。    
 - config.lua：配置战斗环境中的基本元素。例如设置刺的ID和颜色，小球的半径，移动速度和吃的判断条件。    
 - genstar.lua：随机生成系统时间，界面长宽和星星的颜色。  
-- minheap.lua：整合了上下左右方向移动的逻辑，但对最小堆minheap这个概念不清晰。  
+- minheap.lua：小根堆。  
 - objtype.lua：设定M的协议，有star，ball，spore，thorn。  
-- QuadTree.lua：四叉树算法（很重要）。  
+- QuadTree.lua：四叉树算法（很重要），此处应用到空间索引。  
 - server.lua：建立服务器端口号与客户端连接的逻辑和连接成功后的逻辑。  
-- star.lua：星星逻辑，包含存活，更新，死亡，向客户端通知死亡。  
-- testclient.lua：客户端测试逻辑，包含于服务器端的连接逻辑和心跳机制。   
+- star.lua：星星复活和死亡的逻辑，包含存活，更新，死亡，向客户端通知死亡。  
+- testclient.lua：客户端测试逻辑，包含于服务器端的连接逻辑和监听Unix信号。   
 - user.lua：接收用户与服务端的逻辑和消息分发的逻辑。  
-不理解之处  
-1，user.msgHander["FixTime"] = function (self,msg)  
-- vision.lua：视野模块。  
-不理解之处  
-1，function block:RemoveObserver(o)  --移动observer模块？  
-2，function visionMgr:getBlockByPoint(pos) --视野添加模块？  
-3，function visionMgr:calUserVisionBlocks(user)  --视野内通知用户模块？  
-4，function visionMgr:updateViewPort(user) ？  
 #### 注意点  
-1，Ball不光指玩家，所有圆的东西都可指Ball；  
+1，Ball不光指玩家，所有圆的东西都可指Ball；    
+2，用到的数据结构和算法有：    
+- 分块算法；  
+- 四叉树算法；  
+- 小根堆。  
+3，Unix信号：Ctrl-C进程终止；Ctrl-Z进程挂起；Ctrl-\核心转储。
 
 
 

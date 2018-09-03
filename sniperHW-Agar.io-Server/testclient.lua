@@ -23,6 +23,7 @@ msgHandler.ServerTick = function (conn,msg)
 	print("ServerTick")
 end
 
+
 msgHandler.BeginSee = function (conn,msg)
 	print("BeginSee")
 end
@@ -60,7 +61,7 @@ local function main()
 			end
 		end)
 
-		--观察信号，有问题及时报出，类似心跳机制
+		--监听Unix信号
 		event_loop:WatchSignal(chuck.signal.SIGINT,function()
 			print("recv SIGINT stop client")
 			event_loop:Stop()

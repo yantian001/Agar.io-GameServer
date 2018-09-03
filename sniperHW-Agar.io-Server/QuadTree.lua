@@ -1,7 +1,7 @@
 ﻿local M = {}
 
 
-local maxLevel = 5
+local maxLevel = 5  --最大深度
 local maxObjs  = 15
 
 

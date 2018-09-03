@@ -49,7 +49,7 @@ function block:Add(o)
 	end
 end
 
---移动管理模块
+--移动模块
 function block:Remove(o)
 	self.objs[o] = nil
 	for k,v in pairs(self.observers) do
@@ -63,7 +63,7 @@ function block:Remove(o)
 	end
 end
 
---添加服务器端模块
+--添加观察者模块
 function block:AddObserver(o)
 	self.observers[o] = o
 	for k,v in pairs(self.objs) do
@@ -90,7 +90,7 @@ function block:AddObserver(o)
 	end
 end
 
---移动observer模块
+--移动观察者模块
 function block:RemoveObserver(o)
 	if self.observers[o] then
 		self.observers[o] = nil
@@ -158,7 +158,7 @@ function visionMgr:calBlocks(o)
 	return blocks
 end
 
---视野内通知用户模块
+--视野内通知用户视野模块
 function visionMgr:calUserVisionBlocks(user)
 	local blocks = {}
 	blocks.block_info = {}

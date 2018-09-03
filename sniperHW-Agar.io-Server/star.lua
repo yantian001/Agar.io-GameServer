@@ -23,7 +23,7 @@ local function newStar(id,mgr)
 	return o
 end
 
---星星存活
+--星星复活
 function star:Relive()
 	local offset1 = math.floor((self.id - 1) / 32) + 1
 	local offset2 = (self.id - 1) % 32
@@ -54,7 +54,8 @@ function M.newMgr(room)
 	return o
 end
 
-function starMgr:GetStarBits()  --星星标记
+--标记星星
+function starMgr:GetStarBits()
 	return self.starBits
 end
 

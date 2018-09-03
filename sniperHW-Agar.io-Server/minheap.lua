@@ -5,14 +5,14 @@ minheap.__index = minheap
 
 
 function M.new()
-  local o = {}   
+  local o = {}
   o = setmetatable(o, minheap)
   o.m_size = 0
   o.m_data = {}
   return o
 end
 
-
+--小根堆，向上
 function minheap:Up(index)
     local parent_idx = self:Parent(index)
     while parent_idx > 0 do
@@ -26,6 +26,7 @@ function minheap:Up(index)
     end
 end
 
+--小根堆，向下
 function minheap:Down(index)
     local l = self:Left(index)
     local r = self:Right(index)
@@ -45,19 +46,23 @@ function minheap:Down(index)
     end
 end
 
+--根
 function minheap:Parent(index)
     local parent = math.modf(index/2)
     return parent
 end
 
+--向左
 function minheap:Left(index)
     return 2*index
 end
 
+--向右
 function minheap:Right(index)
     return 2*index + 1
 end
 
+--改变
 function minheap:Change(o)
     local index = o.index
     if index == 0 then
@@ -69,6 +74,7 @@ function minheap:Change(o)
 	end
 end
 
+--插入
 function minheap:Insert(o)
     if o.index ~= 0 then
         return
@@ -79,12 +85,14 @@ function minheap:Insert(o)
     self:Up(self.m_size)
 end
 
+--最小
 function minheap:Min()
     if self.m_size == 0 then
         return 0
     end
     return self.m_data[1].timeout
 end
+
 
 function minheap:PopMin()
     local o = self.m_data[1]
@@ -96,10 +104,12 @@ function minheap:PopMin()
     return o
 end
 
+--长度
 function minheap:Size()
     return self.m_size
 end
 
+--交换
 function minheap:swap(idx1,idx2)
     local tmp = self.m_data[idx1]
     self.m_data[idx1] = self.m_data[idx2]
@@ -109,6 +119,7 @@ function minheap:swap(idx1,idx2)
     self.m_data[idx2].index = idx2
 end
 
+--清除、跳过
 function minheap:Clear()
     while m_size > 0 do
         self:PopMin()
