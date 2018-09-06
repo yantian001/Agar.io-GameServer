@@ -28,7 +28,6 @@
 - 小根堆。  
 
 3，Unix信号：Ctrl-C进程终止；Ctrl-Z进程挂起；Ctrl-\核心转储。  
-- 2018.9.6中午：Agar Server端终于在Ubuntu下跑了起来。踩了windows下往linux传文件遇到的sh异常的坑；熟悉了linux命令和网络模式。  
 
 
 
